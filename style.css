@@ -57,8 +57,8 @@ datalist {
     margin: 10px;
     outline: 5px solid var(--gg);
     border-radius: 5px;
-    grid-template-columns: repeat(85, 10px);
-    grid-template-rows: repeat(85, 10px);
+    grid-template-columns: repeat(75, 10px);
+    grid-template-rows: repeat(75, 10px);
 }
 
 .cell {

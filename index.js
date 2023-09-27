@@ -8,10 +8,17 @@ const surviveRule = document.getElementById('survive-rule');
 const patternNumber = document.getElementById('pattern-number');
 const patternButton = document.getElementById('pattern-button');
 
-const NUMBER_ROWS = 85;
-const NUMBER_COLS = 85;
+const NUMBER_ROWS = 75;
+const NUMBER_COLS = 75;
+
+const NUMBER_ROWS_HIDDEN = 100;
+const NUMBER_COLS_HIDDEN = 100;
+
+const DOWN_SHIFT = parseInt((NUMBER_ROWS_HIDDEN - NUMBER_ROWS) / 2);
+const RIGHT_SHIFT = parseInt((NUMBER_COLS_HIDDEN - NUMBER_COLS) / 2);
 
 let grid = Array(NUMBER_ROWS).fill().map(() => Array(NUMBER_COLS).fill());
+let hidden_grid = Array(NUMBER_ROWS_HIDDEN).fill().map(() => Array(NUMBER_COLS_HIDDEN).fill(0));
 let isMousePressed = false;
 let stopSimulation = true;
 
@@ -23,9 +30,12 @@ document.body.addEventListener('mouseup', (e) => {
 });
 clearButton.addEventListener('click', (e) => {
   e.preventDefault();
-  for (i = 0; i < NUMBER_ROWS; i++) {
-    for (j = 0; j < NUMBER_COLS; j++) {
-      grid[i][j].classList.remove('on');
+  for (i = 0; i < NUMBER_ROWS_HIDDEN; i++) {
+    for (j = 0; j < NUMBER_COLS_HIDDEN; j++) {
+      if(i >= DOWN_SHIFT && j >= RIGHT_SHIFT && i - DOWN_SHIFT < NUMBER_ROWS && j - RIGHT_SHIFT < NUMBER_COLS) {
+        grid[i - DOWN_SHIFT][j - RIGHT_SHIFT].classList.remove('on');
+      }
+      hidden_grid[i][j] = 0;
     }
   }
 });
@@ -290,7 +300,6 @@ patternButton.addEventListener('click', (e) => {
       break;
     }
   }
-  console.log(pattern);
   let x_shift = parseInt((NUMBER_ROWS - pattern.length) / 2);
   let y_shift = parseInt((NUMBER_COLS - pattern[0].length) / 2);
   if(patternValue === 14) {
@@ -299,19 +308,19 @@ patternButton.addEventListener('click', (e) => {
   if(patternValue === 15 || patternValue === 16) {
     x_shift += 20;
   }
-  for(i = 0; i < NUMBER_ROWS; i++) {
-    for(j = 0; j < NUMBER_COLS; j++) {
-      if(grid[i][j].classList.contains('on')) {
-        grid[i][j].classList.remove('on');
+  for (i = 0; i < NUMBER_ROWS_HIDDEN; i++) {
+    for (j = 0; j < NUMBER_COLS_HIDDEN; j++) {
+      if (i >= DOWN_SHIFT && j >= RIGHT_SHIFT && i - DOWN_SHIFT < NUMBER_ROWS && j - RIGHT_SHIFT < NUMBER_COLS) {
+        grid[i - DOWN_SHIFT][j - RIGHT_SHIFT].classList.remove('on');
       }
+      hidden_grid[i][j] = 0;
     }
   }
   for(i = 0; i < pattern.length; i++) {
     for(j = 0; j < pattern[0].length; j++) {
-      if(pattern[i][j] === 1 && !grid[i + x_shift][j + y_shift].classList.contains('on')) {
+      if(pattern[i][j] === 1) {
         grid[i + x_shift][j + y_shift].classList.add('on');
-      } else if(pattern[i][j] === 0 && grid[i + x_shift][j + y_shift].classList.contains('on')) {
-        grid[i + x_shift][j + y_shift].classList.remove('on');
+        hidden_grid[i + x_shift + DOWN_SHIFT][j + y_shift + RIGHT_SHIFT] = 1;
       }
     }
   }
@@ -319,41 +328,70 @@ patternButton.addEventListener('click', (e) => {
 
 function lifeSimulate() {
   if (stopSimulation === true) return;
-  let neighbours = Array(NUMBER_ROWS).fill().map(() => Array(NUMBER_COLS).fill(0));
-  for (i = 0; i < NUMBER_ROWS; i++) {
-    for (j = 0; j < NUMBER_COLS; j++) {
+  let neighbours = Array(NUMBER_ROWS_HIDDEN).fill().map(() => Array(NUMBER_COLS_HIDDEN).fill(0));
+  for (i = 0; i < NUMBER_ROWS_HIDDEN; i++) {
+    for (j = 0; j < NUMBER_COLS_HIDDEN; j++) {
       [[-1, 0], [-1, 1], [0, 1], [1, 1], [1, 0], [1, -1], [0, -1], [-1, -1]].forEach((coords) => {
         let [x, y] = coords;
-        if (i + x >= 0 && i + x < NUMBER_ROWS && j + y >= 0 && j + y < NUMBER_COLS && grid[i + x][j + y].classList.contains('on')) neighbours[i][j]++;
+        if (i + x >= 0 && i + x < NUMBER_ROWS_HIDDEN && j + y >= 0 && j + y < NUMBER_COLS_HIDDEN && hidden_grid[i + x][j + y] === 1) neighbours[i][j]++;
       });
     }
   }
+  console.log(neighbours);
   let newNeighbours = neighbours;
-  for (i = 0; i < NUMBER_ROWS; i++) {
-    for (j = 0; j < NUMBER_COLS; j++) {
-
-      if(!grid[i][j].classList.contains('on')) {
+  for (i = 0; i < NUMBER_ROWS_HIDDEN; i++) {
+    for (j = 0; j < NUMBER_COLS_HIDDEN; j++) {
+      if (i >= DOWN_SHIFT && j >= RIGHT_SHIFT && i - DOWN_SHIFT < NUMBER_ROWS && j - RIGHT_SHIFT < NUMBER_COLS) {
+        if(!grid[i - DOWN_SHIFT][j - RIGHT_SHIFT].classList.contains('on')) {
+          let isBorn = false;
+          // BIRTH
+          birthRule.value.split(',').forEach((rule) => {
+            if (parseInt(rule) === neighbours[i][j]) {
+              isBorn = true;
+            }
+          });
+          if(isBorn === true) {
+            grid[i - DOWN_SHIFT][j - RIGHT_SHIFT].classList.add('on');
+            hidden_grid[i][j] = 1;
+            alterNeighbours(1, newNeighbours);
+          }
+        } else {
+          let survives = false;
+          // SURVIVAL
+          surviveRule.value.split(',').forEach((rule) => {
+            if(parseInt(rule) === neighbours[i][j]) {
+              survives = true;
+            }
+          });
+          if (survives === false) {
+            grid[i - DOWN_SHIFT][j - RIGHT_SHIFT].classList.remove('on');
+            hidden_grid[i][j] = 0;
+            alterNeighbours(-1, newNeighbours);
+          }
+        }
+      }
+      else if (hidden_grid[i][j] === 0) {
         let isBorn = false;
         // BIRTH
         birthRule.value.split(',').forEach((rule) => {
-          if(parseInt(rule) === neighbours[i][j]) {
+          if (parseInt(rule) === neighbours[i][j]) {
             isBorn = true;
           }
         });
-        if(isBorn === true) {
-          grid[i][j].classList.add('on');
+        if (isBorn === true) {
+          hidden_grid[i][j] = 1;
           alterNeighbours(1, newNeighbours);
         }
       } else {
         let survives = false;
         // SURVIVAL
         surviveRule.value.split(',').forEach((rule) => {
-          if(parseInt(rule) === neighbours[i][j]) {
+          if (parseInt(rule) === neighbours[i][j]) {
             survives = true;
           }
         });
         if (survives === false) {
-          grid[i][j].classList.remove('on');
+          hidden_grid[i][j] = 0;
           alterNeighbours(-1, newNeighbours);
         }
       }
@@ -371,31 +409,35 @@ function alterNeighbours(amount, neighbours, i, j) {
 }
 
 function gridInitialize() {
-  for (i = 0; i < NUMBER_ROWS; i++) {
-    for (j = 0; j < NUMBER_COLS; j++) {
-      grid[i][j] = document.createElement('div');
-      grid[i][j].classList.add('cell');
-      grid[i][j].dataset.row = i;
-      grid[i][j].dataset.column = j;
-      gridDOM.appendChild(grid[i][j]);
-      let cell = grid[i][j];
-      ['mousedown', 'mouseover'].forEach((event) => {
-        cell.addEventListener(event, (e) => {
-          e.preventDefault;
-          i = cell.dataset.row;
-          j = cell.dataset.column;
-          if (event === 'mousedown') {
-            isMousePressed = true;
-          }
-          if (isMousePressed) {
-            if (grid[i][j].classList.contains('on')) {
-              grid[i][j].classList.remove('on');
-            } else {
-              grid[i][j].classList.add('on');
+  for (i = 0; i < NUMBER_ROWS_HIDDEN; i++) {
+    for (j = 0; j < NUMBER_COLS_HIDDEN; j++) {
+      if (i >= DOWN_SHIFT && j >= RIGHT_SHIFT && i - DOWN_SHIFT < NUMBER_ROWS && j - RIGHT_SHIFT < NUMBER_COLS) {
+        grid[i - DOWN_SHIFT][j - RIGHT_SHIFT] = document.createElement('div');
+        grid[i - DOWN_SHIFT][j - RIGHT_SHIFT].classList.add('cell');
+        grid[i - DOWN_SHIFT][j - RIGHT_SHIFT].dataset.row = i - DOWN_SHIFT;
+        grid[i - DOWN_SHIFT][j - RIGHT_SHIFT].dataset.column = j - RIGHT_SHIFT;
+        gridDOM.appendChild(grid[i - DOWN_SHIFT][j - RIGHT_SHIFT]);
+        let cell = grid[i - DOWN_SHIFT][j - RIGHT_SHIFT];
+        ['mousedown', 'mouseover'].forEach((event) => {
+          cell.addEventListener(event, (e) => {
+            e.preventDefault;
+            i = parseInt(cell.dataset.row);
+            j = parseInt(cell.dataset.column);
+            if (event === 'mousedown') {
+              isMousePressed = true;
             }
-          }
+            if (isMousePressed) {
+              if (grid[i][j].classList.contains('on')) {
+                grid[i][j].classList.remove('on');
+                hidden_grid[i + DOWN_SHIFT][j + RIGHT_SHIFT] = 0;
+              } else {
+                grid[i][j].classList.add('on');
+                hidden_grid[i + DOWN_SHIFT][j + RIGHT_SHIFT] = 1;
+              }
+            }
+          });
         });
-      });
+      }
     }
   }
 }
