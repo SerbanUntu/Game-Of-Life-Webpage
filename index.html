@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Game of Life</title>
+  <link rel="stylesheet" href="./style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Handjet:wght@300&family=REM:wght@300&display=swap"
+    rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=REM:wght@300&display=swap" rel="stylesheet">
+</head>
+
+<body>
+  <main>
+    <div id="grid-content" class="grid-content">
+      <h1 class="special-text">GAME OF LIFE</h1>
+      <div id="grid" class="grid">
+      </div>
+    </div>
+    <div id="user-content" class="user-content">
+      <div id="controls" class="controls">
+        <h1>Controls</h1>
+        <div id="buttons-container" class="buttons-container">
+          <i id="clear-button" class="gg-trash"></i>
+          <i id="play-button" class="gg-play-button"></i>
+        </div>
+        <h2>Simulation speed</h2>
+        <input id="speed-slider" class="speed-slider" name="speed-slider" type="range" min="1" max="50"
+          list="frequency-markers" />
+        <datalist id="frequency-markers">
+          <option label="1Hz">1</option>
+          <option label="50Hz">50</option>
+        </datalist>
+      </div>
+      <div id="rules" class="controls">
+        <h1>Rules</h1>
+        <ul>
+          <li>Every unborn cell with <input id="birth-rule" class="number-input" value="3" type="text" />
+            neighbouring cells will be <span class="special-text">BORN</span>.</li>
+          <li>Every living cell with <input id="survive-rule" class="number-input" value="2,3" type="text" /> 
+            neighbouring cells will <span class="special-text">SURVIVE</span>.</li>
+        </ul>
+      </div>
+      <div id="patterns" class="controls">
+        <h1>Patterns</h1>
+        <ul>
+          <li>Enter a pattern number <input id="pattern-number" class="number-input" value="0" type="text" />
+            <button id="pattern-button">Add</button>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </main>
+  <script src="./index.js"></script>
+</body>
+
+</html>

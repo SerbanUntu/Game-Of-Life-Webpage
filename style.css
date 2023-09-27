@@ -1,0 +1,187 @@
+:root {
+    --bg: rgb(24, 24, 24);
+    --g1: rgb(62, 62, 62);
+    --gg: rgb(25, 177, 78);
+    --rr: rgb(205, 18, 18);
+    --g2: rgb(192, 192, 192);
+}
+
+body {
+    user-select: none;
+    background-color: var(--bg);
+    color: var(--g2);
+    margin: 0;
+    padding: 0;
+    font-family: 'REM', sans-serif;
+    text-align: justify;
+}
+
+main {
+    display: flex;
+    flex-direction: row;
+}
+
+h1,
+h2 {
+    margin: 10px;
+}
+
+h1 {
+    font-size: 50px;
+}
+
+i {
+    cursor: pointer;
+}
+
+datalist {
+    margin-left: 20px;
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    gap: 350px;
+    left: -15px
+}
+
+.special-text {
+    font-family: 'Handjet', cursive;
+    color: var(--gg);
+    font-size: 50px;
+}
+
+/** GRID */
+
+.grid {
+    display: grid;
+    margin: 10px;
+    outline: 5px solid var(--gg);
+    border-radius: 5px;
+    grid-template-columns: repeat(85, 10px);
+    grid-template-rows: repeat(85, 10px);
+}
+
+.cell {
+    background-color: var(--bg);
+    border: 1px solid var(--g1);
+    border-radius: 8px;
+    /** COOL EFFECT */
+    width: 10px;
+    height: 10px;
+    user-select: none;
+}
+
+.on {
+    background-color: var(--gg);
+}
+
+/* User Content */
+
+.user-content,
+.grid-content {
+    display: flex;
+    flex-direction: column;
+    margin: 20px;
+    border: 2px solid var(--g1);
+    border-radius: 20px;
+}
+
+.user-content {
+    width: 450px;
+    gap: 50px;
+    padding-right: 20px;
+}
+
+.controls {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.buttons-container {
+    display: flex;
+    flex-direction: row;
+    gap: 50px;
+    padding: 20px;
+    margin-left: 10px;
+}
+
+/** ICONS */
+
+.gg-trash {
+    box-sizing: border-box;
+    position: relative;
+    display: block;
+    transform: scale(2.5);
+    width: 10px;
+    height: 12px;
+    border: 2px solid transparent;
+    box-shadow:
+        0 0 0 2px,
+        inset -2px 0 0,
+        inset 2px 0 0;
+    border-bottom-left-radius: 1px;
+    border-bottom-right-radius: 1px;
+    margin-top: 4px;
+    top: 13px;
+}
+
+.gg-trash::after,
+.gg-trash::before {
+    content: "";
+    display: block;
+    box-sizing: border-box;
+    position: absolute
+}
+
+.gg-trash::after {
+    background-color: var(--g2);
+    border-radius: 3px;
+    width: 16px;
+    height: 2px;
+    top: -4px;
+    left: -5px
+}
+
+.gg-trash::before {
+    width: 10px;
+    height: 4px;
+    border: 2px solid;
+    border-bottom: transparent;
+    border-top-left-radius: 2px;
+    border-top-right-radius: 2px;
+    top: -7px;
+    left: -2px
+}
+
+.gg-play-button {
+    color: var(--gg);
+    content: "";
+    display: block;
+    box-sizing: border-box;
+    width: 0;
+    height: 40px;
+    border-top: 20px solid transparent;
+    border-bottom: 20px solid transparent;
+    border-left: 32px solid;
+    top: 24px;
+    left: 36px
+}
+
+.gg-play-stop {
+    color: var(--rr);
+    box-sizing: border-box;
+    position: relative;
+    display: block;
+    transform: scale(var(--ggs, 1));
+    width: 40px;
+    height: 40px;
+    background: currentColor
+}
+
+/* Other controls and Rules */
+
+.speed-slider {
+    margin-left: 20px;
+    width: 400px;
+}
