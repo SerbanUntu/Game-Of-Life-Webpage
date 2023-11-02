@@ -14,6 +14,7 @@ body {
     padding: 0;
     font-family: 'REM', sans-serif;
     text-align: justify;
+    overflow: hidden;
 }
 
 main {
@@ -27,7 +28,7 @@ h2 {
 }
 
 h1 {
-    font-size: 50px;
+    font-size: 40px;
 }
 
 i {
@@ -84,18 +85,22 @@ datalist {
     margin: 20px;
     border: 2px solid var(--g1);
     border-radius: 20px;
+    height: 100%;
 }
 
 .user-content {
     width: 450px;
-    gap: 50px;
-    padding-right: 20px;
+    gap: 10px;
 }
 
 .controls {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 5px;   
+}
+
+.controls > ul {
+    margin: 0px;
 }
 
 .buttons-container {
@@ -104,6 +109,34 @@ datalist {
     gap: 50px;
     padding: 20px;
     margin-left: 10px;
+}
+
+.patterns-grid {
+    display: grid;
+    border: 3px solid var(--gg);
+    border-bottom-left-radius: 20px;
+    border-bottom-right-radius: 20px;
+    grid-template-columns: 143px 143px 143px;
+    grid-template-rows: repeat(7, 143px);
+    overflow-x: hidden;
+    overflow-y: scroll;
+    height: 247px;
+}
+
+.pattern-card {
+    background-repeat: no-repeat;
+    background-size: contain;
+    width: 143px;
+    height: 143px;
+    border: 1px solid var(--g1);
+    border-radius: 4px;
+    opacity: 90%;
+    transition: opacity 350ms, filter 350ms;
+}
+
+.pattern-card:hover {
+    opacity: 100%;
+    filter: brightness(130%) saturate(110%);
 }
 
 /** ICONS */

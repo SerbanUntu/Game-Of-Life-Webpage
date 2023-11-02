@@ -5,8 +5,7 @@ const stopButton = document.getElementById('stop-button');
 const speedSlider = document.getElementById('speed-slider');
 const birthRule = document.getElementById('birth-rule');
 const surviveRule = document.getElementById('survive-rule');
-const patternNumber = document.getElementById('pattern-number');
-const patternButton = document.getElementById('pattern-button');
+const patternsGridDOM = document.getElementById('patterns-grid');
 
 const NUMBER_ROWS = 75;
 const NUMBER_COLS = 75;
@@ -17,7 +16,11 @@ const NUMBER_COLS_HIDDEN = 100;
 const DOWN_SHIFT = parseInt((NUMBER_ROWS_HIDDEN - NUMBER_ROWS) / 2);
 const RIGHT_SHIFT = parseInt((NUMBER_COLS_HIDDEN - NUMBER_COLS) / 2);
 
+const NUMBER_OF_PATTERNS = 19;
+const PATTERNS_PER_ROW = 3;
+
 let grid = Array(NUMBER_ROWS).fill().map(() => Array(NUMBER_COLS).fill());
+let patternsGrid = Array(parseInt(NUMBER_OF_PATTERNS / PATTERNS_PER_ROW) + 1).fill().map(() => Array(PATTERNS_PER_ROW).fill());
 let hidden_grid = Array(NUMBER_ROWS_HIDDEN).fill().map(() => Array(NUMBER_COLS_HIDDEN).fill(0));
 let isMousePressed = false;
 let stopSimulation = true;
@@ -25,7 +28,7 @@ let stopSimulation = true;
 gridInitialize();
 
 document.body.addEventListener('mouseup', (e) => {
-  e.preventDefault;
+  e.preventDefault();
   isMousePressed = false;
 });
 clearButton.addEventListener('click', (e) => {
@@ -54,15 +57,14 @@ playButton.addEventListener('click', (e) => {
     lifeSimulate();
   }
 });
-patternButton.addEventListener('click', (e) => {
-  e.preventDefault();
+
+function loadPattern(patternValue) {
   if(stopSimulation === false) {
     playButton.classList.remove('gg-play-stop');
     playButton.classList.add('gg-play-button');
     stopSimulation = true;
     gridDOM.style.pointerEvents = 'all';
   }
-  let patternValue = parseInt(patternNumber.value);
   let pattern;
   switch(patternValue) {
   // Still Lifes
@@ -324,7 +326,7 @@ patternButton.addEventListener('click', (e) => {
       }
     }
   }
-});
+}
 
 function lifeSimulate() {
   if (stopSimulation === true) return;
@@ -420,7 +422,7 @@ function gridInitialize() {
         let cell = grid[i - DOWN_SHIFT][j - RIGHT_SHIFT];
         ['mousedown', 'mouseover'].forEach((event) => {
           cell.addEventListener(event, (e) => {
-            e.preventDefault;
+            e.preventDefault();
             i = parseInt(cell.dataset.row);
             j = parseInt(cell.dataset.column);
             if (event === 'mousedown') {
@@ -439,5 +441,43 @@ function gridInitialize() {
         });
       }
     }
+  }
+  // Patterns grid
+  for (i = 0; i < NUMBER_OF_PATTERNS; i++) {
+    patternsGrid[parseInt(i / 3)][i % 3] = document.createElement('div');
+    patternsGrid[parseInt(i / 3)][i % 3].classList.add('pattern-card');
+    patternsGrid[parseInt(i / 3)][i % 3].dataset.patternNumber = i;
+    
+    let patternCard = patternsGrid[parseInt(i / 3)][i % 3];
+    let imageLink;
+    switch(parseInt(patternCard.dataset.patternNumber) + 1) {
+      case 1: imageLink = '1.Block.png'; break;
+      case 2: imageLink = '2.Tub.png'; break;
+      case 3: imageLink = '3.Bee-hive.png'; break;
+      case 4: imageLink = '4.Loaf.png'; break;
+      case 5: imageLink = '5.Blinker.png'; break;
+      case 6: imageLink = '6.Toad.png'; break;
+      case 7: imageLink = '7.Beacon.png'; break;
+      case 8: imageLink = '8.Pulsar.png'; break;
+      case 9: imageLink = '9.Octagon.png'; break;
+      case 10: imageLink = '10.Penta-decathlon.png'; break;
+      case 11: imageLink = '11.Galaxy.png'; break;
+      case 12: imageLink = '12.Glider.png'; break;
+      case 13: imageLink = '13.Spaceship.png'; break;
+      case 14: imageLink = '14.GliderGun.png'; break;
+      case 15: imageLink = '15.Pufferfish.png'; break;
+      case 16: imageLink = '16.Rake.png'; break;
+      case 17: imageLink = '17.Diehard.png'; break;
+      case 18: imageLink = '18.R-pentomino.png'; break;
+      case 19: imageLink = '19.Acorn.png'; break;
+    }
+    patternCard.style.backgroundImage = `url(./Data/Images/${imageLink})`;
+    patternsGridDOM.appendChild(patternsGrid[parseInt(i / 3)][i % 3]);
+    
+    patternCard.addEventListener('click', (e) => {
+      e.preventDefault();
+      let patternNumber = parseInt(patternCard.dataset.patternNumber) + 1;
+      loadPattern(patternNumber);
+    });
   }
 }
