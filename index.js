@@ -471,7 +471,7 @@ function gridInitialize() {
       case 18: imageLink = '18.R-pentomino.png'; break;
       case 19: imageLink = '19.Acorn.png'; break;
     }
-    patternCard.style.backgroundImage = `url(./Data/Images/${imageLink})`;
+    patternCard.style.backgroundImage = `url(./Data/Images/Pattern_Images/${imageLink})`;
     patternsGridDOM.appendChild(patternsGrid[parseInt(i / 3)][i % 3]);
     
     patternCard.addEventListener('click', (e) => {
